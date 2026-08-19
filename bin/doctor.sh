@@ -15,8 +15,11 @@ MANIFEST="$REPO/manifest.txt"
 [ -f "$MANIFEST" ] || { echo "manifest를 찾을 수 없음: $MANIFEST" >&2; exit 1; }
 
 problems=0
+checked=0
+missing=0
 
 check_one() { # $1=기대원본 $2=대상 $3=표시이름
+  checked=$((checked+1))
   if [ -L "$2" ]; then
     t="$(readlink "$2")"
     if [ ! -e "$2" ]; then echo "DANGLING $2 — 대상 없음 ($t)"; problems=1
@@ -25,7 +28,7 @@ check_one() { # $1=기대원본 $2=대상 $3=표시이름
   elif [ -e "$2" ]; then
     echo "BROKEN   $2 — 링크가 실파일로 대체됨"; problems=1
   else
-    echo "MISSING  $2"; problems=1
+    echo "MISSING  $2"; problems=1; missing=$((missing+1))
   fi
 }
 
@@ -65,5 +68,13 @@ while IFS= read -r raw || [ -n "$raw" ]; do
   fi
   check_one "$src" "$dst" "$dest"
 done < "$MANIFEST"
+
+if [ "$checked" -gt 0 ] && [ "$missing" -eq "$checked" ]; then
+  echo
+  echo "링크가 하나도 없다 — 클론 직후로 보인다."
+  echo "  1) $REPO/bin/link.sh 실행"
+  echo "  2) 도구 재시작 (스킬은 시작 시 로드된다)"
+  echo "  3) README 의 '새 기기 체크리스트' 확인 (settings.json·플러그인은 이 레포가 관리하지 않는다)"
+fi
 
 exit "$problems"
