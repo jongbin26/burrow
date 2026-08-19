@@ -10,7 +10,7 @@
 ## 원칙: 환경과 독립적일 것
 
 레포 내용은 **레포 안에서 완결되어야 한다.** 경로를 박지 않고, 외부 자료가 근거면 인용문을 옮겨 적고,
-기기·계정에 묶인 값은 `settings.local.json`으로 보낸다. 지켜야 할 항목은 `CLAUDE.md`에 있다.
+도구 설정(`settings.json`)처럼 기기마다 달라지는 값은 관리하지 않는다. 지켜야 할 항목은 `CLAUDE.md`에 있다.
 
 ## 구조
 
@@ -28,7 +28,6 @@ $REPO/                        ← 진실. git이 여기만 추적
 │   └── doctor.sh
 └── src/                      ← 홈으로 링크될 원본
     ├── AGENTS.md             ← 전역 개인 지침
-    ├── settings.json
     ├── rules/
     │   └── comments.md
     ├── agents/
@@ -36,7 +35,6 @@ $REPO/                        ← 진실. git이 여기만 추적
 
 ~/.claude/                    ← Claude Code가 읽는 곳
 ├── CLAUDE.md      → $REPO/src/AGENTS.md
-├── settings.json  → $REPO/src/settings.json
 ├── rules/         → $REPO/src/rules/
 ├── agents/        → $REPO/src/agents/
 ├── skills/        (실제 디렉토리 — 아래 항목만 링크)
@@ -156,9 +154,8 @@ $REPO/bin/doctor.sh
 ### BROKEN이 생기는 이유
 
 프로그램이 임시 파일에 쓰고 rename 하는 방식(atomic write)으로 저장하면 심링크가
-일반 파일로 교체된다. 예를 들어 `/memory`에서 auto memory를 토글하면
-`autoMemoryEnabled`가 `~/.claude/settings.json`에 저장되므로, **단일 파일 링크는 이
-문제를 겪을 수 있다.** 디렉토리 링크는 안전하다.
+일반 파일로 교체된다. **도구가 스스로 덮어쓰는 파일은 링크 대상으로 두지 않는다** —
+`settings.json`을 관리하지 않는 이유가 이것이다. 디렉토리 링크는 안전하다.
 
 대응: 실파일 내용을 레포로 옮기고 `link.sh`를 다시 돌리거나, 해당 항목을
 `manifest.txt`에서 빼고 복사로 관리한다.
@@ -172,8 +169,12 @@ $REPO/bin/doctor.sh
 `paste-cache/`, `image-cache/`, `session-env/`, `tasks/`, `shell-snapshots/`,
 `backups/`, `sessions/`, `usage-data/`, `stats-cache.json`, `plugins/`
 
-`settings.local.json`도 머신 전용이라 제외한다. auto mode의 `autoMode` 블록(조직·환경
-컨텍스트, 절대 경로 포함)은 기기·소속마다 다르므로 여기에 둔다.
+**`settings.json`·`settings.local.json`도 제외한다.** 훅·statusLine은 외부 설치물 경로에
+매달려 있고, 플러그인 목록은 마켓플레이스 접근 권한에 따라 달라지며, 도구가 스스로 덮어쓴다.
+기기마다 `/config`로 맞추는 편이 맞다.
+
+새 기기에서 손으로 되살릴 만한 개인 선호는 다음 정도다 — `model`, `theme`(색각 보정),
+`effortLevel`, `advisorModel`, `tui`.
 
 ### 외부 설치물
 
@@ -185,18 +186,13 @@ $REPO/bin/doctor.sh
 
 클론 + `link.sh` 이후 추가로 필요한 것들. 전부 이 레포 바깥이 소유한 상태다.
 
-- **플러그인 설치.** `settings.json`의 `enabledPlugins`·`extraKnownMarketplaces`는 목록일
-  뿐이고 실체는 `~/.claude/plugins/`에 받아야 한다. 사설 마켓플레이스는 접근 권한이 있어야
-  받아진다.
-- **`statusLine` 대상 확인.** 마켓플레이스 플러그인 스크립트를 가리키므로 해당 플러그인이
-  없으면 상태줄이 뜨지 않는다. 안 쓸 기기라면 `settings.json`에서 빼도 된다.
-- **훅 재설치.** `settings.json`이 `$HOME/.claude/hooks/peon-ping/peon.sh`를 여러 이벤트에
-  걸어둔다. 재설치 전까지 `SessionStart` 등에서 훅 에러가 뜬다(무해하다). 훅은 이 레포가 관리하지 않는다.
-- **`settings.local.json` 재구성.** 기기별 권한과 `autoMode`는 따라오지 않는다.
+- **`settings.json` 재구성.** 플러그인·마켓플레이스·훅·statusLine·개인 선호를 그 기기에서
+  다시 잡는다. 이 레포는 관여하지 않는다.
+- **`~/.agents/skills/*` 인스톨러 재실행.** `~/.claude/skills` 안의 외부 심링크 대상이다.
 
 ## 주의
 
-- **레포는 private으로 둘 것.** `settings.json`에 내부 호스트명·플러그인 구성이 담긴다.
+- **레포는 private으로 둘 것.** 개인 지침과 업무 맥락이 담긴 스킬이 들어 있다.
 - Windows는 심링크 생성에 관리자 권한 또는 개발자 모드가 필요하다(WSL이면 무관).
 - 훅에 절대 경로를 박지 말 것. `$HOME/.claude/hooks/x.sh` 형태를 쓴다.
 - 개인/회사 계정을 한 기기에서 같이 쓴다면 `~/.ssh/config`에 Host 별칭을 두고 **양쪽 블록에

@@ -15,8 +15,7 @@ src/AGENTS.md -> .codex/AGENTS.md
 src/AGENTS.md -> .gemini/GEMINI.md
 src/AGENTS.md -> .config/opencode/AGENTS.md
 
-# Claude Code 전용
-src/settings.json -> .claude/settings.json
+# Claude Code 전용 (settings.json 은 기기별 설정이라 관리하지 않는다)
 src/rules/        -> .claude/rules/
 src/agents/       -> .claude/agents/
 
