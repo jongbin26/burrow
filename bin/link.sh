@@ -25,6 +25,9 @@ ensure_parent() { # $1=부모 절대경로 -> 0=진행 1=건너뜀
   if [ "$1" = "$HOME/.claude" ] || [ "$(dirname "$1")" = "$HOME/.claude" ]; then
     mkdir -p "$1"; return 0
   fi
+  if [ "$1" = "$HOME/.agents/skills" ] && [ -d "$HOME/.codex" ]; then
+    mkdir -p "$1"; return 0
+  fi
   [ -d "$1" ] || return 1
   return 0
 }

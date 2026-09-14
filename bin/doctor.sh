@@ -45,6 +45,9 @@ while IFS= read -r raw || [ -n "$raw" ]; do
 
   if [ "${item%/\*}" != "$item" ]; then
     base="${item%/\*}"; src_dir="$REPO/$base"; dst_dir="$HOME/$dest"
+    if [ "$dst_dir" = "$HOME/.agents/skills" ] && [ ! -d "$HOME/.codex" ]; then
+      echo "skip     $dest — $HOME/.codex 없음 (Codex 미설치)"; continue
+    fi
     if [ "$(dirname "$dst_dir")" != "$HOME/.claude" ] && [ ! -d "$(dirname "$dst_dir")" ]; then
       echo "skip     $dest — $(dirname "$dst_dir") 없음 (도구 미설치)"; continue
     fi

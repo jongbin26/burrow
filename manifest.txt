@@ -16,8 +16,8 @@ src/AGENTS.md -> .gemini/GEMINI.md
 src/AGENTS.md -> .config/opencode/AGENTS.md
 
 # Claude Code 전용 (settings.json 은 기기별 설정이라 관리하지 않는다)
-src/rules/        -> .claude/rules/
 src/agents/       -> .claude/agents/
 
 # 외부 설치물과 디렉토리를 공유하므로 항목 단위로 링크한다
 src/skills/*      -> .claude/skills/
+src/skills/*      -> .agents/skills/

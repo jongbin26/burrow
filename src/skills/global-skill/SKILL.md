@@ -11,7 +11,7 @@ description: 지금 하던 작업에서 얻은 규칙·절차를 모든 프로�
 ## 1. 레포 위치를 심링크에서 역추적한다
 
 ```sh
-REPO=$(dirname "$(dirname "$(readlink ~/.claude/CLAUDE.md)")")
+REPO=$(dirname "$(dirname "$(readlink "$HOME/.codex/AGENTS.md" 2>/dev/null || readlink "$HOME/.claude/CLAUDE.md")")")
 ```
 
 경로를 추측하거나 하드코딩하지 않는다. `$REPO/manifest.txt` 존재로 검증한다.
@@ -22,10 +22,9 @@ REPO=$(dirname "$(dirname "$(readlink ~/.claude/CLAUDE.md)")")
 | 성격 | 위치 | 로드 시점 |
 |---|---|---|
 | 요청이 있을 때만 필요한 절차·판정 기준 | `$REPO/src/skills/<name>/SKILL.md` | description 상시, 본문은 호출 시 |
-| 조건 없이 항상 지켜야 하는 제약 | `$REPO/src/rules/<name>.md` | **매 세션 전문** |
-| 도구 중립적인 개인 선호 한두 줄 | `$REPO/src/AGENTS.md` | 매 세션 전문 |
+| 조건 없이 항상 지켜야 하는 제약·개인 선호 | `$REPO/src/AGENTS.md` | 매 세션 전문 |
 
-`rules/`와 `AGENTS.md`는 모든 세션의 토큰을 먹는다. 기본은 스킬이다.
+`AGENTS.md`는 모든 세션의 토큰을 먹는다. 기본은 스킬이다.
 
 ## 3. 스킬을 쓴다
 
@@ -54,7 +53,7 @@ REPO=$(dirname "$(dirname "$(readlink ~/.claude/CLAUDE.md)")")
 4. 링크해도 **세션 재시작 전까지 로드되지 않음**을 안내한다
 5. 커밋·푸시는 사용자가 한다
 
-`rules/`·`AGENTS.md`에 넣은 경우는 디렉토리·파일이 이미 링크돼 있어 1~4가 필요 없다.
+`AGENTS.md`에 넣은 경우는 파일이 이미 링크돼 있어 1~4가 필요 없다.
 
 ## 위반 신호
 

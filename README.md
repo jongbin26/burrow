@@ -28,14 +28,11 @@ $REPO/                        ← 진실. git이 여기만 추적
 │   └── doctor.sh
 └── src/                      ← 홈으로 링크될 원본
     ├── AGENTS.md             ← 전역 개인 지침
-    ├── rules/
-    │   └── comments.md
     ├── agents/
     └── skills/               ← 이 레포가 만든 스킬만 있다
 
 ~/.claude/                    ← Claude Code가 읽는 곳
 ├── CLAUDE.md      → $REPO/src/AGENTS.md
-├── rules/         → $REPO/src/rules/
 ├── agents/        → $REPO/src/agents/
 ├── skills/        (실제 디렉토리 — 아래 항목만 링크)
 │   ├── oop/               → $REPO/src/skills/oop/
@@ -43,6 +40,10 @@ $REPO/                        ← 진실. git이 여기만 추적
 │   └── peon-ping-log/     (플러그인이 만든 것. 건드리지 않는다)
 ├── projects/      (실제 디렉토리, 로컬 전용 — 건드리지 말 것)
 ├── history.jsonl  (실제 파일, 로컬 전용 — 건드리지 말 것)
+└── ...
+
+~/.agents/skills/             ← Codex 개인 스킬 (실제 디렉토리, 항목별 링크)
+├── oop/                      → $REPO/src/skills/oop/
 └── ...
 
 ~/.codex/AGENTS.md            → $REPO/src/AGENTS.md
@@ -69,8 +70,8 @@ $REPO/                        ← 진실. git이 여기만 추적
 | Gemini CLI | `~/.gemini/GEMINI.md` |
 | opencode | `~/.config/opencode/AGENTS.md` |
 
-그래서 `src/AGENTS.md`에는 **도구 중립적인 내용만 쓴다.** 특정 도구에만 통하는 지시는
-`rules/`나 그 도구 전용 설정에 둔다.
+그래서 `src/AGENTS.md`에는 **도구 중립적인 상시 규칙만 쓴다.** 요청 시 필요한 절차는
+`src/skills/`에 두고 Claude Code와 Codex에 같은 원본을 링크한다.
 
 Cursor는 전역 지침 파일 규약이 없어(프로젝트의 `.cursor/rules`를 쓴다) 목록에서 제외했다.
 
@@ -86,6 +87,7 @@ Cursor는 전역 지침 파일 규약이 없어(프로젝트의 `.cursor/rules`�
 
 ```
 src/skills/* -> .claude/skills/
+src/skills/* -> .agents/skills/
 ```
 
 목적지의 부모 디렉토리(도구 홈)가 없으면 해당 도구 미설치로 보고 건너뛴다. 그래서
@@ -130,12 +132,12 @@ git push
 2. `manifest.txt`에 한 줄 추가한다
 3. `link.sh`를 다시 실행한다 (기존 링크는 `ok`로 통과)
 
-디렉토리째 링크된 항목(`rules/`, `agents/`)은 안에 파일을 더해도 아무것도 안 해도 된다.
+디렉토리째 링크된 항목(`agents/`)은 안에 파일을 더해도 아무것도 안 해도 된다.
 **`skills/`는 팬아웃이라 새 스킬을 추가하면 `link.sh`를 다시 돌려야 한다.** 잊어도 `doctor.sh`가
 `MISSING`으로 알려준다.
 
-링크는 **디렉토리 단위로 건다.** `rules/comments.md`가 아니라 `rules/`. 그래야 새 파일이
-자동으로 따라온다.
+공유 스킬은 **항목 단위로 링크한다.** 두 도구의 스킬 디렉토리를 실제 디렉토리로 유지해
+외부 설치물이 만든 이웃을 보존한다.
 
 ## doctor.sh
 
@@ -182,7 +184,8 @@ $REPO/bin/doctor.sh
 ### 외부 설치물
 
 플러그인·인스톨러가 만든 스킬·훅은 **이 레포에 들어오지 않는다.** `skills/`를 통째로 링크하지 않고
-항목 단위로 링크하기 때문에, `~/.claude/skills`는 실디렉토리로 남고 남의 것은 그 자리에 그대로 있다.
+항목 단위로 링크하기 때문에, `~/.claude/skills`와 `~/.agents/skills`는 실디렉토리로 남고
+남의 것은 그 자리에 그대로 있다.
 그래서 `.gitignore`에 남의 것을 나열할 필요가 없다.
 
 ## 새 기기 체크리스트
@@ -191,7 +194,7 @@ $REPO/bin/doctor.sh
 
 - **`settings.json` 재구성.** 플러그인·마켓플레이스·훅·statusLine·개인 선호를 그 기기에서
   다시 잡는다. 이 레포는 관여하지 않는다.
-- **`~/.agents/skills/*` 인스톨러 재실행.** `~/.claude/skills` 안의 외부 심링크 대상이다.
+- **외부 스킬 인스톨러 재실행.** 이 레포가 소유하지 않는 스킬은 별도로 설치한다.
 
 ## 주의
 
