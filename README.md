@@ -29,13 +29,15 @@ $REPO/                        ← 진실. git이 여기만 추적
 └── src/                      ← 홈으로 링크될 원본
     ├── AGENTS.md             ← 전역 개인 지침
     ├── agents/
-    └── skills/               ← 이 레포가 만든 스킬만 있다
+    ├── skills/               ← 이 레포가 만든 스킬만 있다
+    └── dev-core/             ← 개발 지식 스킬. skills/ 와 같은 목적지로 링크
 
 ~/.claude/                    ← Claude Code가 읽는 곳
 ├── CLAUDE.md      → $REPO/src/AGENTS.md
 ├── agents/        → $REPO/src/agents/
 ├── skills/        (실제 디렉토리 — 아래 항목만 링크)
-│   ├── oop/               → $REPO/src/skills/oop/
+│   ├── pr-writing/        → $REPO/src/skills/pr-writing/
+│   ├── root-cause/        → $REPO/src/dev-core/root-cause/
 │   ├── ...
 │   └── peon-ping-log/     (플러그인이 만든 것. 건드리지 않는다)
 ├── projects/      (실제 디렉토리, 로컬 전용 — 건드리지 말 것)
@@ -43,7 +45,7 @@ $REPO/                        ← 진실. git이 여기만 추적
 └── ...
 
 ~/.agents/skills/             ← Codex 개인 스킬 (실제 디렉토리, 항목별 링크)
-├── oop/                      → $REPO/src/skills/oop/
+├── pr-writing/               → $REPO/src/skills/pr-writing/
 └── ...
 
 ~/.codex/AGENTS.md            → $REPO/src/AGENTS.md
@@ -71,7 +73,7 @@ $REPO/                        ← 진실. git이 여기만 추적
 | opencode | `~/.config/opencode/AGENTS.md` |
 
 그래서 `src/AGENTS.md`에는 **도구 중립적인 상시 규칙만 쓴다.** 요청 시 필요한 절차는
-`src/skills/`에 두고 Claude Code와 Codex에 같은 원본을 링크한다.
+`src/skills/`와 `src/dev-core/`에 두고 Claude Code와 Codex에 같은 원본을 링크한다.
 
 Cursor는 전역 지침 파일 규약이 없어(프로젝트의 `.cursor/rules`를 쓴다) 목록에서 제외했다.
 
@@ -88,6 +90,8 @@ Cursor는 전역 지침 파일 규약이 없어(프로젝트의 `.cursor/rules`�
 ```
 src/skills/* -> .claude/skills/
 src/skills/* -> .agents/skills/
+src/dev-core/* -> .claude/skills/
+src/dev-core/* -> .agents/skills/
 ```
 
 목적지의 부모 디렉토리(도구 홈)가 없으면 해당 도구 미설치로 보고 건너뛴다. 그래서
@@ -133,7 +137,7 @@ git push
 3. `link.sh`를 다시 실행한다 (기존 링크는 `ok`로 통과)
 
 디렉토리째 링크된 항목(`agents/`)은 안에 파일을 더해도 아무것도 안 해도 된다.
-**`skills/`는 팬아웃이라 새 스킬을 추가하면 `link.sh`를 다시 돌려야 한다.** 잊어도 `doctor.sh`가
+**`skills/`와 `dev-core/`는 팬아웃이라 새 스킬을 추가하면 `link.sh`를 다시 돌려야 한다.** 잊어도 `doctor.sh`가
 `MISSING`으로 알려준다.
 
 공유 스킬은 **항목 단위로 링크한다.** 두 도구의 스킬 디렉토리를 실제 디렉토리로 유지해

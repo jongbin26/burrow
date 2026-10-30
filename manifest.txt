@@ -21,3 +21,5 @@ src/agents/       -> .claude/agents/
 # 외부 설치물과 디렉토리를 공유하므로 항목 단위로 링크한다
 src/skills/*      -> .claude/skills/
 src/skills/*      -> .agents/skills/
+src/dev-core/*    -> .claude/skills/
+src/dev-core/*    -> .agents/skills/
