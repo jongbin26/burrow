@@ -1,6 +1,6 @@
 ---
 name: module-boundaries
-description: 코드를 어느 모듈이나 레이어에 둘지 정할 때, 모듈 경계와 의존 방향을 리뷰할 때 쓴다. 하위 모듈이 consumer의 도메인을 알고 있는지, producer가 할 일을 consumer가 메우고 있는지, 구현 상세가 인터페이스로 새는지 본다. 의존 방향, 외부 데이터의 validation 위치, single source of truth, 못 지킨 경계의 격리도 본다. 레이어를 지금 만들지는 abstraction, 상태와 실패의 모양은 type-modeling, 변경 범위와 순서는 change-scope.
+description: 코드를 어느 모듈이나 레이어에 둘지 정할 때, 모듈 경계와 의존 방향을 리뷰할 때 쓴다. 하위 모듈이 consumer의 도메인을 알고 있는지, producer가 할 일을 consumer가 메우고 있는지, 구현 상세가 인터페이스로 새는지 본다. 의존 방향, 외부 데이터의 validation 위치, single source of truth, 못 지킨 경계의 격리도 본다. 레이어를 지금 만들지는 abstraction, 상태와 실패의 모양은 type-modeling, 변경 범위와 순서는 change-scope, 한 파일 안의 책임 수와 가변 상태는 cohesion.
 ---
 
 # 모듈 경계
