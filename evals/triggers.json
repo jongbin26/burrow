@@ -148,6 +148,16 @@
       "expect": [
         "readability-pass"
       ]
+    },
+    {
+      "id": "type-modeling-flag-state-machine",
+      "prompt": "포인터 제스처 코드가 drag·deep·additive·moved 같은 플래그 조합으로 모드를 가려서 if 분기가 서른 개야. RxJS를 들이면 깔끔해질까, 아니면 다른 문제일까?",
+      "expect": [
+        "type-modeling"
+      ],
+      "forbid": [
+        "cohesion"
+      ]
     }
   ]
 }
