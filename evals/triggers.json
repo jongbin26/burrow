@@ -158,6 +158,16 @@
       "forbid": [
         "cohesion"
       ]
+    },
+    {
+      "id": "cohesion-mixed-height-interface",
+      "prompt": "편집기 커맨드 인터페이스에 undo·redo 같은 기본 동작이랑 setSpeakerNote처럼 기능 하나에만 쓰는 메서드가 같이 들어 있어. 위계가 안 맞는 것 같은데 어떻게 봐야 해?",
+      "expect": [
+        "cohesion"
+      ],
+      "forbid": [
+        "abstraction"
+      ]
     }
   ]
 }
