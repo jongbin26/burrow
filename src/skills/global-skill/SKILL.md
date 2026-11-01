@@ -49,11 +49,12 @@ REPO=$(dirname "$(dirname "$(readlink "$HOME/.codex/AGENTS.md" 2>/dev/null || re
 
 `src/skills/`·`src/dev-core/`는 항목 단위로 링크되므로 **새 스킬은 링크가 없어 도구가 인식하지 못한다.**
 
-1. `$REPO/bin/doctor.sh`를 돌려 `MISSING` 목록을 근거로 보여준다
-2. `$REPO/bin/link.sh` 실행 여부를 **사용자에게 묻는다**
-3. 출력에 `backup`이 있으면 기존 실체를 치우는 중이므로 멈추고 알린다
-4. 링크해도 **세션 재시작 전까지 로드되지 않음**을 안내한다
-5. 커밋·푸시는 사용자가 한다
+1. `$REPO/bin/lint-skills.py`를 통과시킨다. description을 정했으면 `evals/triggers.json`에 케이스를 더하고 `$REPO/bin/eval-triggers.py --case <id>`로 호출되는지 본다
+2. `$REPO/bin/doctor.sh`를 돌려 `MISSING` 목록을 근거로 보여준다
+3. `$REPO/bin/link.sh` 실행 여부를 **사용자에게 묻는다**
+4. 출력에 `backup`이 있으면 기존 실체를 치우는 중이므로 멈추고 알린다
+5. 링크해도 **세션 재시작 전까지 로드되지 않음**을 안내한다
+6. 커밋·푸시는 사용자가 한다
 
 `AGENTS.md`에 넣은 경우는 파일이 이미 링크돼 있어 1~4가 필요 없다.
 

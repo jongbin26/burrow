@@ -1,0 +1,153 @@
+{
+  "_comment": "스킬 자동 호출 케이스. expect 중 하나가 호출돼야 통과, forbid 는 하나라도 호출되면 실패. expect 가 비면 forbid 만 본다. bin/eval-triggers.py 가 Claude Code 와 Codex 양쪽에 같은 케이스를 돌린다",
+  "cases": [
+    {
+      "id": "root-cause-sleep-fix",
+      "prompt": "결제 완료 화면이 가끔 빈 화면으로 뜬다는 리포트가 왔어. 동료가 렌더 전에 300ms 기다리는 setTimeout을 넣자고 PR을 올렸는데, 이게 원인을 고치는 건지 봐줘.",
+      "expect": [
+        "root-cause"
+      ],
+      "forbid": [
+        "change-scope"
+      ]
+    },
+    {
+      "id": "root-cause-regression",
+      "prompt": "내 PR에서 CI 통합 테스트가 깨졌어. 내 변경 때문인지 원래부터 깨져 있던 건지 어떻게 가려야 할까? 원인 찾는 순서를 잡아줘.",
+      "expect": [
+        "root-cause"
+      ]
+    },
+    {
+      "id": "change-scope-drive-by",
+      "prompt": "버그 하나 고치는 PR인데, 고치는 김에 근처 파일들 포맷이랑 변수명도 같이 정리했어. 이거 한 PR에 다 넣어도 될지 봐줘.",
+      "expect": [
+        "change-scope",
+        "pr-slicing"
+      ],
+      "forbid": [
+        "root-cause"
+      ]
+    },
+    {
+      "id": "change-scope-breaking-api",
+      "prompt": "공용 설정 함수의 시그니처를 바꾸려고 해. 기존 함수를 지우고 이걸 쓰는 30곳을 이번 변경에서 한꺼번에 새 시그니처로 옮기려는데, 이렇게 넣어도 안전할까?",
+      "expect": [
+        "change-scope",
+        "pr-slicing"
+      ]
+    },
+    {
+      "id": "module-boundaries-consumer-patch",
+      "prompt": "API 응답의 날짜가 문자열로 와서 화면 컴포넌트 세 곳에서 각자 Date로 파싱하고 있어. 이 변환 코드를 어느 레이어에 두는 게 맞을까?",
+      "expect": [
+        "module-boundaries"
+      ]
+    },
+    {
+      "id": "module-boundaries-shared-domain",
+      "prompt": "공용 HTTP 클라이언트 모듈에 결제 페이지 전용 에러 코드 매핑을 넣으려고 해. 여기 두는 게 맞는지 모듈 경계 관점에서 봐줘.",
+      "expect": [
+        "module-boundaries"
+      ]
+    },
+    {
+      "id": "abstraction-premature-layer",
+      "prompt": "fetch를 감싸는 ApiService 클래스와 IApiService 인터페이스를 먼저 만들어 두려고 해. 지금 호출하는 곳은 한 군데뿐인데 나중을 위해 만들어 두는 게 나을까?",
+      "expect": [
+        "abstraction"
+      ]
+    },
+    {
+      "id": "abstraction-naming",
+      "prompt": "updateUser라는 함수가 실제로는 유저를 저장하고 환영 메일까지 보내. 이 함수 이름 이대로 괜찮을까?",
+      "expect": [
+        "abstraction"
+      ]
+    },
+    {
+      "id": "type-modeling-optional-result",
+      "prompt": "API 결과 타입을 { success?: boolean; data?: T; error?: string } 로 정의했어. 이렇게 모델링해도 괜찮을까?",
+      "expect": [
+        "type-modeling"
+      ]
+    },
+    {
+      "id": "type-modeling-derived-state",
+      "prompt": "장바구니 상태에 items 배열이랑 totalCount를 따로 두고, 아이템이 바뀔 때마다 둘 다 업데이트하고 있어. 이 상태 설계 괜찮아?",
+      "expect": [
+        "type-modeling"
+      ]
+    },
+    {
+      "id": "observability-event-design",
+      "prompt": "결제 실패를 추적하려고 클라이언트에 관측 이벤트를 추가하려 해. 이벤트 이름이랑 필드를 어떻게 잡을지 봐줘.",
+      "expect": [
+        "observability"
+      ]
+    },
+    {
+      "id": "write-test-code-unit",
+      "prompt": "할인 금액을 계산하는 순수 함수 모듈이 있는데, 여기에 단위 테스트를 작성하려고 해. 어떤 케이스를 어떻게 구성할지 잡아줘.",
+      "expect": [
+        "write-test-code"
+      ]
+    },
+    {
+      "id": "dev-core-update-correction",
+      "prompt": "아까 네가 공용 HTTP 클라이언트에 페이지별 분기를 넣자고 했잖아. 그건 아니야. 공용 모듈은 호출하는 쪽 도메인을 몰라야 해. 앞으로 설계할 때 이 기준을 계속 지켜줘.",
+      "expect": [
+        "dev-core-update"
+      ]
+    },
+    {
+      "id": "negative-typo",
+      "prompt": "README의 '설치 방법' 절에 있는 오타 '설지'를 '설치'로 바꾸는 방법만 한 줄로 알려줘.",
+      "expect": [],
+      "forbid": [
+        "root-cause",
+        "change-scope",
+        "module-boundaries",
+        "abstraction",
+        "type-modeling",
+        "observability",
+        "write-test-code",
+        "dev-core-update"
+      ]
+    },
+    {
+      "id": "cohesion-god-file",
+      "prompt": "editor.ts가 300줄인데 공개 타입, 스냅샷 캐시, 명령 스무 개, undo·redo가 한 함수 안에 다 들어 있어. 읽기가 너무 힘든데 어떻게 나눠야 할지 봐줘.",
+      "expect": [
+        "cohesion"
+      ],
+      "forbid": [
+        "pr-slicing"
+      ]
+    },
+    {
+      "id": "cohesion-pattern-addition",
+      "prompt": "기존 store 생성 함수에 원격 반영 명령 하나만 더 넣으려고 해. 이미 있는 명령들이랑 같은 패턴으로 추가하면 될 것 같은데, 그냥 넣어도 되는지 봐줘.",
+      "expect": [
+        "cohesion"
+      ]
+    },
+    {
+      "id": "file-map-new-package",
+      "prompt": "편집기 코어를 별도 패키지로 새로 만들 거야. 코드 쓰기 전에 디렉토리 안 파일 구조부터 잡아줘.",
+      "expect": [
+        "file-map"
+      ],
+      "forbid": [
+        "pr-slicing"
+      ]
+    },
+    {
+      "id": "readability-pass-done",
+      "prompt": "기능 구현 다 끝났고 테스트·타입·린트 전부 통과했어. 보고하기 전에 마무리 점검해줘.",
+      "expect": [
+        "readability-pass"
+      ]
+    }
+  ]
+}

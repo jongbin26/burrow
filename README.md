@@ -25,7 +25,10 @@ $REPO/                        ← 진실. git이 여기만 추적
 ├── manifest.txt
 ├── bin/
 │   ├── link.sh
-│   └── doctor.sh
+│   ├── doctor.sh
+│   ├── lint-skills.py        ← 스킬 정적 점검
+│   └── eval-triggers.py      ← 스킬 자동 호출 eval
+├── evals/triggers.json       ← eval 케이스
 └── src/                      ← 홈으로 링크될 원본
     ├── AGENTS.md             ← 전역 개인 지침
     ├── agents/
@@ -168,6 +171,35 @@ $REPO/bin/doctor.sh
 
 대응: 실파일 내용을 레포로 옮기고 `link.sh`를 다시 돌리거나, 해당 항목을
 `manifest.txt`에서 빼고 복사로 관리한다.
+
+## 스킬 검증
+
+스킬은 description만 보고 자동 호출되므로, 문구를 고치면 엉뚱한 스킬이 불리거나 아무것도 안 불릴 수 있다.
+두 층으로 확인한다.
+
+```sh
+$REPO/bin/lint-skills.py       # 모델 호출 없음. 스킬을 고칠 때마다
+$REPO/bin/eval-triggers.py     # 실제 모델 호출. description을 고쳤을 때
+```
+
+**`lint-skills.py`** — frontmatter `name`과 디렉토리명 일치, description 길이, description이 언급한
+스킬이 실제로 있는지, dev-core 형식(원칙 7개 이하, 판정 질문 두 개 이하, 예시 3줄 이내, 위반 신호 절)을 본다.
+
+**`eval-triggers.py`** — `evals/triggers.json`의 발화를 Claude Code와 Codex에 똑같이 넣고, 어떤 스킬이
+불렸는지 채점한다. 케이스마다 `expect`(이 중 하나가 불려야 함)와 `forbid`(불리면 안 됨)를 둔다.
+
+| 에이전트 | 실행 | 호출 판정 | 격리 |
+|---|---|---|---|
+| Claude Code | `claude plugin eval` (src 스킬을 임시 플러그인으로 묶음) | trace의 `Skill` tool_use 입력 | 플러그인 eval 샌드박스. 개인 CLAUDE.md·설정·다른 플러그인 없음 |
+| Codex | `codex exec --json -s read-only` | `.agents/skills/<name>/SKILL.md`를 읽는 `command_execution` | 임시 `HOME`·`CODEX_HOME`. `auth.json`만 복사하고 끝나면 삭제 |
+
+- 케이스당 기본 1회. 확률적이라 description을 확정할 때는 `--runs 3`
+- 비용은 Claude 쪽이 케이스당 약 $0.1. `--max-cost-usd`(기본 5)로 상한을 건다
+- `E1`은 실행 자체가 실패한 회차다. 호출 안 됨과 구분한다
+- Codex 설치본이 여러 개면 `CODEX_BIN=<경로>`로 지정한다
+- 실패하면 케이스가 모호한지 description이 겹치는지 먼저 가른다. 케이스가 모호하면 `expect`를 넓히고,
+  description이 겹치면 해당 스킬을 고친다
+- 새 스킬을 만들면 호출돼야 할 발화와 비슷하지만 다른 스킬이어야 할 발화를 하나씩 추가한다
 
 ## 레포에 넣지 않는 것
 

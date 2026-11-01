@@ -55,6 +55,7 @@ git -C "$REPO" pull --ff-only
 
 ## 5. 보여주고 멈춘다
 
+- `$REPO/bin/lint-skills.py` 를 돌려 통과시킨다. description 을 바꿨다면 `$REPO/bin/eval-triggers.py` 도 돌리고, 새 스킬이면 `evals/triggers.json` 에 호출돼야 할 발화와 다른 스킬이어야 할 발화를 하나씩 추가한다
 - 바꾼 파일의 diff 를 보여준다. 근거가 된 사용자 원문도 함께 보여준다
 - 커밋 메시지 초안을 낸다. 언어는 레포의 기존 커밋을 따른다
 - 커밋과 푸시는 사용자가 한다
