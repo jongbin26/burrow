@@ -196,6 +196,129 @@
       "expect": [
         "effect"
       ]
+    },
+    {
+      "id": "session-refactor-next",
+      "prompt": "편집기를 패키지로 나누는 작업을 끝냈어. 다음으로 리팩토링 할 부분 없는지 확인해줘.",
+      "expect": [
+        "dev-index",
+        "cohesion",
+        "module-boundaries",
+        "abstraction",
+        "change-scope"
+      ],
+      "ok": [
+        "type-modeling"
+      ]
+    },
+    {
+      "id": "session-design-priorities",
+      "prompt": "편집기 코드를 더 돌면서 확인해줘. 편집기 설계의 중요한 관점에서 계속 보고, 그 관점에서 문제를 중요도 순으로 나열해줘.",
+      "expect": [
+        "dev-index",
+        "module-boundaries",
+        "cohesion",
+        "type-modeling",
+        "abstraction"
+      ],
+      "ok": [
+        "change-scope"
+      ]
+    },
+    {
+      "id": "session-lint-split",
+      "prompt": "Canvas 컴포넌트 파일이 720줄이고 컴포넌트 함수 하나가 500줄이라 린트의 파일·함수 크기 한도를 넘어. 한도 예외 목록에서 빼려고 하니 이 파일을 나눠줘.",
+      "expect": [
+        "cohesion"
+      ],
+      "ok": [
+        "module-boundaries",
+        "react",
+        "file-map"
+      ]
+    },
+    {
+      "id": "session-root-direction",
+      "prompt": "원인은 문서가 바뀔 때마다 화면 DOM을 통째로 갈아 끼우는 구조라는 거였지. 땜빵 말고 근본적인 문제를 해결하는 방향성으로 진행하자.",
+      "expect": [
+        "dev-index",
+        "root-cause",
+        "change-scope"
+      ],
+      "ok": [
+        "module-boundaries"
+      ]
+    },
+    {
+      "id": "session-locked-resize",
+      "prompt": "텍스트 폭을 줄인 이후에 다시 넓히기가 안 돼. 일반적인 경우는 되는데 특정 케이스에서 락 걸린 것처럼 고정된 이후로 안 늘어나.",
+      "expect": [
+        "root-cause"
+      ],
+      "ok": []
+    },
+    {
+      "id": "session-pin-with-tests",
+      "prompt": "요소를 고른 뒤 다른 요소를 끌면 선택 상자가 이전 자리에 남는 버그랑, 회전하면 0도 근처에서 틀어지는 버그가 있어. 이 두 케이스도 테스트로 틀어막고 싶어.",
+      "expect": [
+        "write-test-code",
+        "root-cause"
+      ],
+      "ok": []
+    },
+    {
+      "id": "session-adversarial-design",
+      "prompt": "AI 편집 결과를 문서 전체가 같을 때만 넣지 말고, 보낸 시점과 결과의 레코드 diff를 만들어 건드린 레코드만 비교해 넣는 방식으로 바꾸려 해. 이 설계를 적대적으로 검토해줘.",
+      "expect": [
+        "dev-index",
+        "change-scope",
+        "module-boundaries",
+        "type-modeling"
+      ],
+      "ok": [
+        "abstraction"
+      ]
+    },
+    {
+      "id": "session-split-by-responsibility",
+      "prompt": "우선 Editor.tsx 가르자. 700줄 넘는 화면 조립 컴포넌트인데 책임에 맞는 설계를 진행해줘.",
+      "expect": [
+        "cohesion"
+      ],
+      "ok": [
+        "module-boundaries",
+        "react",
+        "file-map"
+      ]
+    },
+    {
+      "id": "session-new-session-field",
+      "prompt": "편집기 세션 상태에 손잡이로 끄는 중인 요소를 담는 필드를 새로 넣으려 해. 누른 요소 목록과 끌기 문턱을 넘었는지 여부를 같이 담아야 하는데 모양을 정해줘.",
+      "expect": [
+        "type-modeling"
+      ],
+      "ok": [
+        "typescript"
+      ]
+    },
+    {
+      "id": "negative-visual-tweak",
+      "prompt": "랜딩 페이지의 주 버튼 색을 조금 더 밝은 파란색으로 바꾸고 싶어. 어울리는 hex 값 하나만 추천해줘.",
+      "expect": [],
+      "ok": []
+    },
+    {
+      "id": "dev-index-review-diff",
+      "prompt": "방금 끝낸 리팩토링 diff를 커밋 전에 설계 관점에서 검토해줘. 파일을 여러 개로 나누고 새 타입 두 개를 만들었어.",
+      "expect": [
+        "dev-index",
+        "cohesion",
+        "type-modeling",
+        "readability-pass"
+      ],
+      "ok": [
+        "module-boundaries"
+      ]
     }
   ]
 }

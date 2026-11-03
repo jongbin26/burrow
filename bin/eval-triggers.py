@@ -53,11 +53,15 @@ def repo_skills():
     return {c.name for d in SKILL_DIRS for c in d.iterdir() if (c / "SKILL.md").is_file()}
 
 
+# 개발 지식 목차. 어떤 개발 판단 케이스에서 불려도 오답이 아니다(그다음 본문을 여는 입구). 부르지 않아야 할 케이스(expect 비어 있음)에서는 오답
+INDEX = "dev-index"
+
+
 def verdict(case, invoked, scope):
     """(통과 여부, 정답 밖에서 불린 레포 스킬)"""
     invoked = invoked & scope
     hit = any(s in invoked for s in case["expect"]) if case["expect"] else True
-    extra = invoked - set(case["expect"]) - set(case.get("ok", []))
+    extra = invoked - set(case["expect"]) - set(case.get("ok", [])) - ({INDEX} if case["expect"] else set())
     return hit and not extra, extra
 
 
@@ -75,7 +79,7 @@ def run_claude(cases, runs, model, max_cost):
             d = plugin / "evals" / c["id"]
             (d / "graders").mkdir(parents=True)
             (d / "prompt.md").write_text(
-                "---\nmax_turns: 3\nallowed_tools: [Read, Glob, Grep, Skill]\n---\n\n" + c["prompt"] + "\n"
+                "---\nmax_turns: 5\nallowed_tools: [Read, Glob, Grep, Skill]\n---\n\n" + c["prompt"] + "\n"
             )
             # 채점은 trace 의 Skill 입력으로 직접 함. plugin eval 이 grader 를 요구해 호출 횟수만 세는 것을 둠
             (d / "graders" / "any-skill.md").write_text(

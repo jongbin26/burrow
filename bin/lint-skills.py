@@ -71,6 +71,24 @@ def check_stack_links(path, body, core_names):
             report(path, f"'{title}' 원칙 링크가 dev-core 스킬을 가리키지 않음: {link}")
 
 
+INDEX = "dev-index"  # 개발 지식 스킬 목차. 목록이 실제 스킬과 어긋나면 목차가 없는 스킬을 가리키거나 새 스킬을 빠뜨린다
+
+
+def check_index(skills):
+    index = skills.get(INDEX)
+    if index is None:
+        return
+    body = index.read_text().split("\n---\n", 1)[-1]
+    listed = set(re.findall(r"(?<![\w-])([a-z][a-z0-9]*(?:-[a-z0-9]+)*)(?![\w-])", body))
+    for name, f in skills.items():
+        if name != INDEX and (f.is_relative_to(DEV_CORE) or f.is_relative_to(DEV_STACK)) and name not in listed:
+            report(index, f"목차에 '{name}' 이 없음")
+    for row in re.findall(r"^\|.*\|\s*([^|]+?)\s*\|$", body, re.M):
+        for name in re.split(r"\s*/\s*|,\s*", row):
+            if re.fullmatch(r"[a-z][a-z-]*", name) and name not in skills:
+                report(index, f"목차가 없는 스킬 '{name}' 을 가리킴")
+
+
 def main():
     skills = {}
     for d in SKILL_DIRS:
@@ -109,6 +127,8 @@ def main():
         if f.is_relative_to(DEV_STACK):
             check_principles(f, text)
             check_stack_links(f, text, {n for n, p in skills.items() if p.is_relative_to(DEV_CORE)})
+
+    check_index(skills)
 
     for p in problems:
         print(p)
