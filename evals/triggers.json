@@ -67,6 +67,9 @@
       "prompt": "API 결과 타입을 { success?: boolean; data?: T; error?: string } 로 정의했어. 이렇게 모델링해도 괜찮을까?",
       "expect": [
         "type-modeling"
+      ],
+      "ok": [
+        "typescript"
       ]
     },
     {
@@ -107,6 +110,10 @@
       "prompt": "editor.ts가 300줄인데 공개 타입, 스냅샷 캐시, 명령 스무 개, undo·redo가 한 함수 안에 다 들어 있어. 읽기가 너무 힘든데 어떻게 나눠야 할지 봐줘.",
       "expect": [
         "cohesion"
+      ],
+      "ok": [
+        "module-boundaries",
+        "typescript"
       ]
     },
     {
@@ -141,6 +148,9 @@
       "prompt": "포인터 제스처 코드가 drag·deep·additive·moved 같은 플래그 조합으로 모드를 가려서 if 분기가 서른 개야. RxJS를 들이면 깔끔해질까, 아니면 다른 문제일까?",
       "expect": [
         "type-modeling"
+      ],
+      "ok": [
+        "rxjs"
       ]
     },
     {
@@ -148,6 +158,43 @@
       "prompt": "편집기 커맨드 인터페이스에 undo·redo 같은 기본 동작이랑 setSpeakerNote처럼 기능 하나에만 쓰는 메서드가 같이 들어 있어. 위계가 안 맞는 것 같은데 어떻게 봐야 해?",
       "expect": [
         "cohesion"
+      ]
+    },
+    {
+      "id": "typescript-optional-fields",
+      "prompt": "이 .ts 파일의 Shape 타입에 기능이 붙을 때마다 optional 필드가 하나씩 늘어서 지금 여덟 개야. 쓰는 곳마다 ?. 랑 ! 가 반복되는데, 타입을 어떻게 고치면 좋을까?",
+      "expect": [
+        "typescript"
+      ],
+      "ok": [
+        "type-modeling"
+      ]
+    },
+    {
+      "id": "rxjs-expose-subject",
+      "prompt": "RxJS로 만든 상태 서비스에서 내부 BehaviorSubject를 public 필드로 그대로 노출하고 있어. 바깥 컴포넌트들이 그걸 구독해서 각자 filter랑 map을 붙여 쓰는데, 이 구조 괜찮아?",
+      "expect": [
+        "rxjs"
+      ],
+      "ok": [
+        "module-boundaries"
+      ]
+    },
+    {
+      "id": "react-heavy-effect",
+      "prompt": "React 컴포넌트의 useEffect 하나가 의존성이 일곱 개에 데이터 패칭, 폼 상태 초기화, 스크롤 위치 복원까지 다 하고 있어. 이거 어떻게 정리해야 할까?",
+      "expect": [
+        "react"
+      ],
+      "ok": [
+        "cohesion"
+      ]
+    },
+    {
+      "id": "effect-run-in-service",
+      "prompt": "Effect로 작성한 서비스 함수 안에서 Effect.runPromise를 호출해서 Promise로 돌려주고 있어. 이 방식 괜찮은지 봐줘.",
+      "expect": [
+        "effect"
       ]
     }
   ]

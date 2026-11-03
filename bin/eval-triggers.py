@@ -26,7 +26,7 @@ import time
 from pathlib import Path
 
 REPO = Path(os.environ.get("CLAUDE_CONFIG_REPO") or Path(__file__).resolve().parent.parent)
-SKILL_DIRS = [REPO / "src" / "skills", REPO / "src" / "dev-core"]
+SKILL_DIRS = [REPO / "src" / "skills", REPO / "src" / "dev-core", REPO / "src" / "dev-stack"]
 CASES = REPO / "evals" / "triggers.json"
 PLUGIN_NAME = "burrow"
 

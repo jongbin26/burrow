@@ -6,13 +6,16 @@ import sys
 from pathlib import Path
 
 REPO = Path(os.environ.get("CLAUDE_CONFIG_REPO") or Path(__file__).resolve().parent.parent)
-SKILL_DIRS = [REPO / "src" / "skills", REPO / "src" / "dev-core"]
+SKILL_DIRS = [REPO / "src" / "skills", REPO / "src" / "dev-core", REPO / "src" / "dev-stack"]
 DEV_CORE = REPO / "src" / "dev-core"
+DEV_STACK = REPO / "src" / "dev-stack"
 
 DESCRIPTION_MAX = 1024  # Agent Skills 스펙의 description 상한
 MAX_PRINCIPLES = 7
 MAX_QUESTIONS = 2
 MAX_EXAMPLE_LINES = 3
+# dev-core 는 기술에 묶이지 않음. 기술 이름이 보이면 dev-stack 으로 갈 내용
+TECH_WORDS = re.compile(r"\b(?:React|RxJS|Next\.?js|TypeScript|Effect\.\w+|zod|use[A-Z]\w+|vitest|jest|vi\.\w+)\b")
 KEBAB = re.compile(r"(?<![/\w-])[a-z][a-z0-9]*(?:-[a-z0-9]+)+(?![/\w-])")  # 경로 조각 제외
 
 problems = []
@@ -53,6 +56,21 @@ def check_principles(path, body):
         report(path, "'## 위반 신호' 절 없음")
 
 
+def check_stack_links(path, body, core_names):
+    for s in re.split(r"\n(?=## )", body):
+        if not re.match(r"## \d+\.", s):
+            continue
+        title = s.splitlines()[0]
+        link = next((l for l in s.splitlines() if l.startswith("원칙:")), None)
+        if link is None:
+            report(path, f"'{title}' 에 dev-core 를 가리키는 '원칙:' 줄 없음")
+            continue
+        names = re.findall(r"([a-z][a-z-]+) \d+", link)
+        unknown = [n for n in names if n not in core_names]
+        if not names or unknown:
+            report(path, f"'{title}' 원칙 링크가 dev-core 스킬을 가리키지 않음: {link}")
+
+
 def main():
     skills = {}
     for d in SKILL_DIRS:
@@ -85,6 +103,12 @@ def main():
             report(f, f"description 이 없는 스킬 '{ref}' 을 참조")
         if f.is_relative_to(DEV_CORE) and "판정 질문:" in text:
             check_principles(f, text)
+        if f.is_relative_to(DEV_CORE):
+            for word in sorted(set(TECH_WORDS.findall(text))):
+                report(f, f"dev-core 에 기술 이름 '{word}' (dev-stack 으로)")
+        if f.is_relative_to(DEV_STACK):
+            check_principles(f, text)
+            check_stack_links(f, text, {n for n, p in skills.items() if p.is_relative_to(DEV_CORE)})
 
     for p in problems:
         print(p)

@@ -26,7 +26,7 @@ REPO=$(dirname "$(dirname "$(readlink "$HOME/.codex/AGENTS.md" 2>/dev/null || re
 
 `AGENTS.md`는 모든 세션의 토큰을 먹는다. 기본은 스킬이다.
 
-설계·구현 판단 기준 같은 개발 지식이면 `$REPO/src/dev-core/`에 두고 이 절차 대신 `dev-core-update`를 따른다.
+설계·구현 판단 기준 같은 개발 지식이면 `$REPO/src/dev-core/`(기술 무관)나 `$REPO/src/dev-stack/`(특정 기술)에 두고 이 절차 대신 `dev-core-update`를 따른다.
 
 ## 3. 스킬을 쓴다
 
@@ -47,7 +47,7 @@ REPO=$(dirname "$(dirname "$(readlink "$HOME/.codex/AGENTS.md" 2>/dev/null || re
 
 ## 5. 마무리 — 링크를 묻는다
 
-`src/skills/`·`src/dev-core/`는 항목 단위로 링크되므로 **새 스킬은 링크가 없어 도구가 인식하지 못한다.**
+`src/skills/`·`src/dev-core/`·`src/dev-stack/`는 항목 단위로 링크되므로 **새 스킬은 링크가 없어 도구가 인식하지 못한다.**
 
 1. `$REPO/bin/lint-skills.py`를 통과시킨다. description을 정했으면 `evals/triggers.json`에 케이스를 더하고 `$REPO/bin/eval-triggers.py --case <id>`로 호출되는지 본다
 2. `$REPO/bin/doctor.sh`를 돌려 `MISSING` 목록을 근거로 보여준다
