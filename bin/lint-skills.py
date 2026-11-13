@@ -2,6 +2,7 @@
 """스킬 정적 점검. 모델 호출 없이 frontmatter·상호 참조·dev-core 형식을 본다. 문제가 있으면 exit 1."""
 import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -89,6 +90,22 @@ def check_index(skills):
                 report(index, f"목차가 없는 스킬 '{name}' 을 가리킴")
 
 
+def check_file_maps():
+    checker = REPO / "src" / "skills" / "file-map" / "scripts" / "check-file-map.py"
+    for skill_dir in SKILL_DIRS:
+        for readme in skill_dir.glob("*/README.md"):
+            if "## 파일 지도" not in readme.read_text():
+                continue
+            result = subprocess.run(
+                [sys.executable, str(checker), str(readme.parent)],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if result.returncode != 0:
+                report(readme, result.stdout.strip())
+
+
 def main():
     skills = {}
     for d in SKILL_DIRS:
@@ -129,6 +146,7 @@ def main():
             check_stack_links(f, text, {n for n, p in skills.items() if p.is_relative_to(DEV_CORE)})
 
     check_index(skills)
+    check_file_maps()
 
     for p in problems:
         print(p)

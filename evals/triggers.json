@@ -101,6 +101,29 @@
       ]
     },
     {
+      "id": "design-fidelity-rejected-shape",
+      "prompt": "앞에서 하나의 Action 유니온에 저장 명령과 화면 동작을 섞지 않기로 합의했어. 이제 그 설계를 PR 세 개로 나눠 구현하려는데, 합의가 각 단계에서 유실되지 않도록 완료 조건까지 잡아줘.",
+      "expect": [
+        "design-fidelity"
+      ],
+      "ok": [
+        "change-scope",
+        "pr-slicing",
+        "module-boundaries",
+        "type-modeling"
+      ]
+    },
+    {
+      "id": "design-fidelity-negative-simple-api",
+      "prompt": "공용 설정 함수의 시그니처를 바꾸고 기존 사용처 열두 곳을 옮길 거야. PR을 어떻게 나누는 게 좋을까?",
+      "expect": [
+        "pr-slicing"
+      ],
+      "ok": [
+        "change-scope"
+      ]
+    },
+    {
       "id": "negative-typo",
       "prompt": "README의 '설치 방법' 절에 있는 오타 '설지'를 '설치'로 바꾸는 방법만 한 줄로 알려줘.",
       "expect": []
