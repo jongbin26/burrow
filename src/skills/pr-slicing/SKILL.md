@@ -66,14 +66,28 @@ description: 실행 계획을 여러 PR로 나눌 때 쓴다. 조각을 PR로 �
 부모 브랜치에 force-push(로컬 squash·rebase·amend)를 하면 조상 SHA가 갈려 **자식 전부에
 rebase가 강제**된다. 리뷰 반영은 추가 커밋으로 얹고, 정리가 필요하면 스택을 모두 머지한 뒤에 한다.
 
-## 6. 스택 등록은 base 체인과 다른 층이다
+## 6. 스택은 전용 Stacked PR API에 등록한다
 
-base를 앞 브랜치로 두면 스택은 이미 성립하고 병렬 리뷰도 열린다(4). 호스팅 도구의 **스택 등록**은
-그 위의 별개 층이다 — 등록해야 얻는 것은 레이어 UI, 스택 단위 일괄 머지, 그리고 부모 머지 시
-자식의 자동 rebase·retarget이다(*"when a parent PR merges … the pull requests above it stay open
-and automatically rebase and retarget"*). 등록은 선택이며, 등록하지 않았다고 규칙 위반이 아니다.
+base를 앞 브랜치로 두는 것은 **등록 전 조건**일 뿐, 등록된 스택이 아니다. 스택으로 전달하기로
+판정한 PR은 호스팅 도구의 전용 Stacked PR API로 반드시 등록한다. 일반 PR 생성 API에 base만
+체이닝하거나 `gh pr create`를 반복한 상태로 스택 작업을 완료했다고 보고하지 않는다.
 
-등록 도구를 쓸 때 두 가지가 조용히 깨진다.
+GitHub에서는 열린 PR을 만든 뒤 Stacks REST API `POST /repos/{owner}/{repo}/stacks`에 PR 번호를
+바닥부터 위 순서로 넘긴다. 기존 스택 위에 더할 때는 전용 add endpoint를 쓴다. 전용 도구가 이
+API를 제공하면 그 도구를 우선하고, 없으면 `gh api`로 같은 endpoint를 호출한다. API가 없거나
+권한·preview·등록 오류로 실패하면 일반 PR 체인으로 조용히 대체하지 말고 막힌 이유를 보고한다.
+
+등록 직후 Stacks 조회 API로 다음을 모두 검증한 뒤에만 완료로 판정한다.
+
+- 모든 대상 PR이 같은 stack number에 속한다
+- PR 순서가 계획한 바닥 → 위 순서와 같다
+- 바닥 PR의 stack base가 의도한 트렁크다
+- 각 자식 PR의 직접 base가 바로 아래 PR의 head다
+
+전용 등록을 해야 레이어 UI, 스택 단위 머지, 부모 머지 뒤 자동 rebase·retarget, 트렁크 기준의
+CI·보호 규칙을 얻는다. 따라서 등록은 선택적인 편의 기능이 아니라 스택 전달 방식의 일부다.
+
+등록할 때 두 가지가 조용히 깨진다.
 
 - **트렁크 기본값이 저장소 기본 브랜치다.** 릴리스·핫픽스처럼 트렁크가 기본 브랜치가 아니면
   반드시 명시한다(`--base`). 누락하면 바닥 PR의 base가 경고 없이 기본 브랜치로 바뀐다
@@ -105,6 +119,9 @@ PR만 새 이름으로 재지정하고, *head로* 쓰는 PR은 닫는다. 이름
 - 선형 의존인데 앞 PR 머지를 기다리느라 뒤 PR이 열리지 않은 채 대기 중이다
 - 스택 자식 PR이 부모 미머지 상태에서 빌드가 깨져 있다
 - 스택 바닥 PR의 base가 의도한 트렁크가 아니다
+- 일반 PR 생성 API로 base만 체이닝하고 Stacked PR API에 등록하지 않았다
+- Stacks 조회 API로 stack number·순서·trunk를 확인하지 않고 완료로 보고했다
+- Stacked PR API 실패를 일반 PR 체인으로 조용히 대체했다
 - 스택에 속한 브랜치를 rename해 PR이 닫혔다
 - "이 PR만 보면 뭘 검증해야 할지 모르겠다"는 리뷰 코멘트가 반복된다
 - 병렬로 낸 PR 두 개가 같은 계약 파일을 동시에 고친다
