@@ -124,6 +124,51 @@
       ]
     },
     {
+      "id": "design-fidelity-implementation-no-pr",
+      "prompt": "아까 저장 명령과 화면 후속 동작을 같은 결과 유니온에 넣지 않기로 교정했지. PR 계획은 필요 없고, 그 최종 합의가 약해지지 않게 지금 구현해줘.",
+      "expect": [
+        "design-fidelity"
+      ],
+      "ok": [
+        "abstraction",
+        "change-scope",
+        "module-boundaries",
+        "type-modeling"
+      ]
+    },
+    {
+      "id": "design-fidelity-post-implementation-review",
+      "prompt": "방금 구현한 입력 경계가 아까 합의한 구조 그대로인지 다시 검수해줘. 외부 타입만 바뀌고 내부의 혼합 유니온이 남은 건 아닌지도 확인해.",
+      "expect": [
+        "design-fidelity"
+      ],
+      "ok": [
+        "abstraction",
+        "module-boundaries",
+        "type-modeling"
+      ]
+    },
+    {
+      "id": "design-fidelity-document-conflict",
+      "prompt": "최신 대화에서는 기존 Action 계약을 없애기로 했는데 저장소 계획 문서는 아직 그 계약을 감싸서 유지하라고 해. 구현 전에 어느 결정을 기준으로 삼을지 정리해줘.",
+      "expect": [
+        "design-fidelity"
+      ],
+      "ok": [
+        "change-scope"
+      ]
+    },
+    {
+      "id": "design-fidelity-negative-multiple-prs",
+      "prompt": "서로 독립적인 검색 개선과 알림 설정 기능을 각각 구현하려고 해. 이전에 교정한 설계는 없고 두 변경을 여러 PR로 어떻게 나눌지만 정해줘.",
+      "expect": [
+        "pr-slicing"
+      ],
+      "ok": [
+        "change-scope"
+      ]
+    },
+    {
       "id": "negative-typo",
       "prompt": "README의 '설치 방법' 절에 있는 오타 '설지'를 '설치'로 바꾸는 방법만 한 줄로 알려줘.",
       "expect": []
