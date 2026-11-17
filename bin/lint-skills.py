@@ -11,6 +11,31 @@ SKILL_DIRS = [REPO / "src" / "skills", REPO / "src" / "dev-core", REPO / "src" /
 DEV_CORE = REPO / "src" / "dev-core"
 DEV_STACK = REPO / "src" / "dev-stack"
 
+# 파일 지도 도입 전에 있던 스킬. 여기 없는 새 디렉토리는 README 지도를 갖춰야 한다
+LEGACY_SKILLS_WITHOUT_FILE_MAP = {
+    "src/dev-core/abstraction",
+    "src/dev-core/change-scope",
+    "src/dev-core/cohesion",
+    "src/dev-core/dev-core-update",
+    "src/dev-core/dev-index",
+    "src/dev-core/module-boundaries",
+    "src/dev-core/observability",
+    "src/dev-core/root-cause",
+    "src/dev-core/type-modeling",
+    "src/dev-core/write-test-code",
+    "src/dev-stack/effect",
+    "src/dev-stack/react",
+    "src/dev-stack/rxjs",
+    "src/dev-stack/typescript",
+    "src/skills/file-map",
+    "src/skills/global-skill",
+    "src/skills/persona",
+    "src/skills/pr-slicing",
+    "src/skills/pr-writing",
+    "src/skills/readability-pass",
+    "src/skills/write-agent-doc",
+}
+
 DESCRIPTION_MAX = 1024  # Agent Skills 스펙의 description 상한
 MAX_PRINCIPLES = 7
 MAX_QUESTIONS = 2
@@ -92,9 +117,17 @@ def check_index(skills):
 
 def check_file_maps():
     checker = REPO / "src" / "skills" / "file-map" / "scripts" / "check-file-map.py"
-    for skill_dir in SKILL_DIRS:
-        for readme in skill_dir.glob("*/README.md"):
+    for skill_root in SKILL_DIRS:
+        for skill_dir in sorted(path for path in skill_root.iterdir() if path.is_dir()):
+            relative = skill_dir.relative_to(REPO).as_posix()
+            readme = skill_dir / "README.md"
+            if not readme.is_file():
+                if relative not in LEGACY_SKILLS_WITHOUT_FILE_MAP:
+                    report(skill_dir, "README.md 파일 지도 없음")
+                continue
             if "## 파일 지도" not in readme.read_text():
+                if relative not in LEGACY_SKILLS_WITHOUT_FILE_MAP:
+                    report(readme, "'## 파일 지도' 절 없음")
                 continue
             result = subprocess.run(
                 [sys.executable, str(checker), str(readme.parent)],
@@ -103,7 +136,7 @@ def check_file_maps():
                 check=False,
             )
             if result.returncode != 0:
-                report(readme, result.stdout.strip())
+                report(readme, (result.stdout or result.stderr).strip())
 
 
 def main():
