@@ -1,6 +1,6 @@
 ---
 name: type-modeling
-description: 상태, 결과, 실패, 비동기 흐름을 어떤 모양으로 표현할지 정할 때와 그런 타입과 시그니처를 리뷰할 때 쓴다. 규칙을 타입으로 강제할지 runtime validation으로 물러설지, "모름"과 "없음"을 구분하는지, 실패가 한 경로로 흐르는지, 상태를 정말 늘려야 하는지, 흐름에 맞는 비동기 도구를 골랐는지, 조회에 side effect가 숨어 있는지, 플래그 조합이 숨은 상태기계인지 본다. 코드를 어디에 둘지와 외부 데이터 변환 지점은 module-boundaries, 레이어를 지금 만들지는 abstraction, 실패 원인 추적은 root-cause, 계측은 observability.
+description: 상태, 결과, 실패, 비동기 흐름을 어떤 모양으로 표현할지 정할 때와 그런 타입과 시그니처를 리뷰할 때 쓴다. 공개 API·export 목록·index 파일·프로토콜 메시지 타입을 고치기 직전에 호출한다. 규칙을 타입으로 강제할지 runtime validation으로 물러설지, "모름"과 "없음"을 구분하는지, 실패가 한 경로로 흐르는지, 상태를 정말 늘려야 하는지, 흐름에 맞는 비동기 도구를 골랐는지, 조회에 side effect가 숨어 있는지, 플래그 조합이 숨은 상태기계인지 본다. 코드를 어디에 둘지와 외부 데이터 변환 지점은 module-boundaries, 레이어를 지금 만들지는 abstraction, 실패 원인 추적은 root-cause, 계측은 observability.
 ---
 
 # 타입 모델링

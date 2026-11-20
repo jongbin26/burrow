@@ -27,11 +27,14 @@ $REPO/                        ← 진실. git이 여기만 추적
 │   ├── link.sh
 │   ├── doctor.sh
 │   ├── lint-skills.py        ← 스킬 정적 점검
+│   ├── install-hooks.py      ← burrow 훅을 이 기기 settings.json 에 병합
 │   └── eval-triggers.py      ← 스킬 자동 호출 eval
 ├── evals/triggers.json       ← eval 케이스
+├── tests/                    ← 훅 테스트 (python3 -m unittest discover -s tests)
 └── src/                      ← 홈으로 링크될 원본
     ├── AGENTS.md             ← 전역 개인 지침
     ├── agents/
+    ├── hooks/burrow/         ← 스킬을 작업 흐름에 끼우는 Claude Code 훅. 파일 지도는 그 README
     ├── skills/               ← 이 레포가 만든 스킬만 있다
     ├── dev-core/             ← 기술에 묶이지 않는 개발 방법론 스킬. skills/ 와 같은 목적지로 링크
     └── dev-stack/            ← 방법론을 특정 언어·라이브러리로 구현하는 스킬. 같은 목적지로 링크

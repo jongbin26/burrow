@@ -387,6 +387,17 @@
       "ok": [
         "module-boundaries"
       ]
+    },
+    {
+      "id": "write-test-code-edit-test-file",
+      "prompt": "tokenRefresher.test.ts에 만료된 토큰이면 재발급을 한 번만 요청하는 케이스를 추가해줘.",
+      "expect": [
+        "write-test-code"
+      ],
+      "ok": [
+        "typescript",
+        "dev-index"
+      ]
     }
   ]
 }

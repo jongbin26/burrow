@@ -1,6 +1,6 @@
 ---
 name: design-fidelity
-description: 여러 차례 합의하거나 교정한 설계를 계획·구현·PR로 옮길 때, 최신 결정과 거부한 구조가 작업 중 유실되지 않았는지 검증할 때 쓴다. 책임 판단은 module-boundaries, 변경 순서는 change-scope, PR 경계는 pr-slicing.
+description: 여러 차례 합의하거나 교정한 설계를 계획·구현·PR로 옮길 때, 공개 API·export·프로토콜 같은 계약 파일을 고칠 때, 최신 결정과 거부한 구조가 작업 중 유실되지 않았는지 검증할 때 쓴다. 책임 판단은 module-boundaries, 변경 순서는 change-scope, PR 경계는 pr-slicing.
 ---
 
 # 설계 합의 충실도

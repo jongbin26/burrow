@@ -1,6 +1,6 @@
 ---
 name: change-scope
-description: 변경을 어디까지, 어떤 순서와 안전장치로 넣을지 정할 때, 그런 diff를 리뷰할 때 쓴다. 요청과 상관없이 얹힌 수정이 있는지, 같은 결함을 어디까지 같이 고칠지, 기존 패턴과 같은 모양인지, 타협한 자리를 드러냈는지, additive하게 점진적으로 migration하는지, feature flag나 revert 하나로 되돌릴 수 있는지, 엄격함이 버릴 코드인지 오래 갈 코드인지에 맞는지 본다. 원인 찾기와 임시 대 근본은 root-cause, 추상화를 지금 만들지는 abstraction, PR 분할은 pr-slicing, PR과 커밋 서술은 pr-writing.
+description: 변경을 어디까지, 어떤 순서와 안전장치로 넣을지 정할 때, 그런 diff를 리뷰할 때 쓴다. 공개 계약·패키지 export를 바꾸거나 커밋 범위를 정하기 직전에 호출한다. 요청과 상관없이 얹힌 수정이 있는지, 같은 결함을 어디까지 같이 고칠지, 기존 패턴과 같은 모양인지, 타협한 자리를 드러냈는지, additive하게 점진적으로 migration하는지, feature flag나 revert 하나로 되돌릴 수 있는지, 엄격함이 버릴 코드인지 오래 갈 코드인지에 맞는지 본다. 원인 찾기와 임시 대 근본은 root-cause, 추상화를 지금 만들지는 abstraction, PR 분할은 pr-slicing, PR과 커밋 서술은 pr-writing.
 ---
 
 # 변경 범위

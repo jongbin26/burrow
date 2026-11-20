@@ -10,6 +10,7 @@ REPO = Path(os.environ.get("CLAUDE_CONFIG_REPO") or Path(__file__).resolve().par
 SKILL_DIRS = [REPO / "src" / "skills", REPO / "src" / "dev-core", REPO / "src" / "dev-stack"]
 DEV_CORE = REPO / "src" / "dev-core"
 DEV_STACK = REPO / "src" / "dev-stack"
+MAPPED_DIRS = [REPO / "src" / "hooks" / "burrow"]
 
 # 파일 지도 도입 전에 있던 스킬. 여기 없는 새 디렉토리는 README 지도를 갖춰야 한다
 LEGACY_SKILLS_WITHOUT_FILE_MAP = {
@@ -137,6 +138,16 @@ def check_file_maps():
             )
             if result.returncode != 0:
                 report(readme, (result.stdout or result.stderr).strip())
+    # 스킬 밖에서 지도를 갖춘 디렉토리
+    for directory in MAPPED_DIRS:
+        result = subprocess.run(
+            [sys.executable, str(checker), str(directory)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if result.returncode != 0:
+            report(directory / "README.md", (result.stdout or result.stderr).strip())
 
 
 def main():
