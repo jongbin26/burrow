@@ -10,7 +10,7 @@ _HOW = {
     "readability-pass": "Skill(skill: \"readability-pass\") — 이번에 건드린 파일마다 책임 한 문장·바뀌는 이유를 판정",
     "pr-slicing": "Skill(skill: \"pr-slicing\") — 이 조각이 PR 문턱을 넘는지, 스택·병렬 중 무엇인지 판정",
     "pr-writing": "Skill(skill: \"pr-writing\") — 원인·하지 않은 선택·확인 못 한 것을 본문에 남기는지 판정",
-    REVIEWER: "Agent(subagent_type: \"burrow-reviewer\", prompt: \"<base 브랜치>...HEAD diff 를 리뷰\") — 끝날 때까지 기다린 뒤 지적을 반영",
+    REVIEWER: "git diff <base>...HEAD > <scratchpad>/review.diff 를 만든 뒤 Agent(subagent_type: \"burrow-reviewer\", prompt: \"diff: <그 경로>, 합의·거부한 설계: ...\") — 끝날 때까지 기다린 뒤 지적을 반영",
 }
 
 
@@ -49,10 +49,13 @@ def check_command(session: Session, actions: set[str]) -> str | None:
     return None
 
 
-def check_stop(session: Session, stop_hook_active: bool) -> str | None:
-    """소스를 고친 뒤 readability-pass 없이 멈추려 하면 한 번 막는다. 새 편집이 생겨야 다시 막는다."""
+def check_stop(session: Session, stop_hook_active: bool, *, mid_task: bool = False) -> str | None:
+    """소스를 고친 뒤 readability-pass 없이 멈추려 하면 한 번 막는다. 새 편집이 생겨야 다시 막는다.
+
+    - mid_task: 하위 에이전트가 아직 돌거나 사용자에게 묻고 멈추는 턴. 보고가 아니라 막지 않음
+    """
     last_edit = session.last("edit")
-    if stop_hook_active or last_edit < 0:
+    if stop_hook_active or mid_task or last_edit < 0:
         return None
     if session.last("skill", "readability-pass") > last_edit or session.last("block", "stop") > last_edit:
         return None

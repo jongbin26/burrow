@@ -107,6 +107,41 @@ class HookTest(unittest.TestCase):
         self.edit()
         self.assertEqual(self.stop()["decision"], "block")
 
+    def test_stop_skipped_while_subagent_runs(self):
+        self.edit()
+        self.run_hook({"hook_event_name": "SubagentStart", "agent_id": "a1", "agent_type": "general-purpose"})
+        self.assertIsNone(self.stop())
+        self.run_hook({"hook_event_name": "SubagentStop", "agent_id": "a1", "agent_type": "general-purpose"})
+        self.assertEqual(self.stop()["decision"], "block")
+
+    def test_subagent_stop_without_id_closes_same_type(self):
+        self.edit()
+        self.run_hook({"hook_event_name": "SubagentStart", "agent_id": "a1", "agent_type": "burrow-reviewer"})
+        self.run_hook({"hook_event_name": "SubagentStop", "agent_type": "burrow-reviewer"})
+        self.assertEqual(self.stop()["decision"], "block")
+
+    def transcript(self, *blocks):
+        path = Path(self.tmp.name) / "t.jsonl"
+        rows = [{"type": "user", "message": {"content": "x"}},
+                {"type": "assistant", "isSidechain": True, "message": {"content": [{"type": "text", "text": "a?"}]}},
+                {"type": "assistant", "message": {"content": list(blocks)}}]
+        path.write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in rows))
+        return str(path)
+
+    def test_stop_skipped_when_turn_ends_with_question(self):
+        self.edit()
+        asked = self.transcript({"type": "text", "text": "어느 쪽으로 할까요?"})
+        self.assertIsNone(self.run_hook({"hook_event_name": "Stop", "transcript_path": asked}))
+        tool = self.transcript({"type": "tool_use", "name": "AskUserQuestion", "input": {}})
+        self.assertIsNone(self.run_hook({"hook_event_name": "Stop", "transcript_path": tool}))
+        report = self.transcript({"type": "text", "text": "반영했습니다."})
+        self.assertEqual(self.run_hook({"hook_event_name": "Stop", "transcript_path": report})["decision"], "block")
+
+    def test_unreadable_transcript_still_blocks(self):
+        self.edit()
+        out = self.run_hook({"hook_event_name": "Stop", "transcript_path": "/nonexistent/t.jsonl"})
+        self.assertEqual(out["decision"], "block")
+
     def test_scratch_edits_do_not_count(self):
         self.run_hook({"hook_event_name": "PostToolUse", "tool_name": "Write",
                        "tool_input": {"file_path": "/private/tmp/x/scratchpad/a.py", "content": ""}})
@@ -135,6 +170,21 @@ class HookTest(unittest.TestCase):
         self.assertIsNone(self.edit(lines=150))
         self.assertIn('"cohesion"', self.edit(lines=201)["hookSpecificOutput"]["additionalContext"])
         self.assertIsNone(self.edit(lines=230))
+
+    def test_asset_links_blocked_outside_allowlist(self):
+        cfg = Path(self.tmp.name) / "cfg" / "pr-assets"
+        cfg.mkdir(parents=True)
+        (cfg / "config.json").write_text(json.dumps(
+            {"remote": "git@alias:me/assets.git", "allow": ["me/*"]}))
+        env = {"XDG_CONFIG_HOME": str(cfg.parent), "BURROW_GATES": "off"}
+        url = "https://github.com/me/assets/blob/abc/assets/x.svg?raw=true"
+        body = Path(self.tmp.name) / "body.md"
+        body.write_text(f"![x]({url})")
+        self.assertTrue(self.denied(self.bash(f'gh pr create -R corp/app --body "![x]({url})"', **env)))
+        self.assertTrue(self.denied(self.bash(f"gh pr edit 1 --repo corp/app --body-file {body}", **env)))
+        self.assertIsNone(self.bash(f'gh pr create -R me/tool --body "![x]({url})"', **env))
+        self.assertIsNone(self.bash('gh pr create -R corp/app --body "plain"', **env))
+        self.assertIsNone(self.bash(f'echo "{url}"', **env))
 
     def test_broken_input_passes(self):
         r = subprocess.run([sys.executable, str(HOOK)], input="not json", text=True, capture_output=True,

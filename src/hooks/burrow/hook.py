@@ -17,6 +17,7 @@ import asset_guard  # noqa: E402
 import commands  # noqa: E402
 import gates  # noqa: E402
 import nudges  # noqa: E402
+import turn  # noqa: E402
 from paths import is_source  # noqa: E402
 from state import Session  # noqa: E402
 
@@ -34,6 +35,10 @@ def _context(event: str, text: str | None) -> dict | None:
 
 def _skill_name(raw: str) -> str:
     return (raw or "").rsplit(":", 1)[-1]
+
+
+def _agent_key(data: dict) -> str:
+    return f"{data.get('agent_id') or ''}|{data.get('agent_type') or ''}"
 
 
 def _edit_target(tool_input: dict) -> tuple[str, str]:
@@ -78,14 +83,20 @@ def _dispatch(data: dict) -> dict | None:
         return _pre_tool(session, data)
     if event == "PostToolUse":
         return _post_tool(session, data)
-    if event == "SubagentStop" and data.get("agent_type"):
-        session.add("agent", data["agent_type"])
+    if event == "SubagentStart":
+        session.add("agent-start", _agent_key(data))
+    elif event == "SubagentStop":
+        session.add("agent-stop", _agent_key(data))
+        if data.get("agent_type"):
+            session.add("agent", data["agent_type"])
     elif event == "UserPromptSubmit":
         m = _SLASH.match(data.get("prompt") or "")
         if m:
             session.add("skill", _skill_name(m.group(1)))
     elif event == "Stop" and _gates_on():
-        reason = gates.check_stop(session, bool(data.get("stop_hook_active")))
+        mid_task = session.unfinished("agent-start", "agent-stop") > 0 or turn.ends_with_question(
+            data.get("transcript_path", ""))
+        reason = gates.check_stop(session, bool(data.get("stop_hook_active")), mid_task=mid_task)
         if reason:
             return {"decision": "block", "reason": reason}
     return None

@@ -9,6 +9,7 @@ Claude Code 훅으로 burrow 스킬을 작업 흐름에 끼워 넣는다. `$HOME
 | 2 | 새 파일, 공개 계약 파일, 테스트 파일 편집, 200줄 초과 | 해당 스킬을 열라는 문맥을 한 번 주입 |
 | 3 | PR 생성 | `burrow-reviewer` 에이전트가 마지막 편집 뒤에 끝났는지 확인 |
 
+- 멈춤 점검은 작업 도중이면 건너뜀: 하위 에이전트가 아직 끝나지 않았거나, 마지막 응답이 물음표·`AskUserQuestion`으로 끝날 때. 커밋·PR 게이트는 그대로라 점검이 빠지지는 않음
 - 스크립트 오류는 언제나 통과로 처리. 깨진 PreToolUse 훅은 모든 셸 호출을 막기 때문
 - `BURROW_GATES=off` 환경변수로 띄운 세션은 스킬 차단 없이 기록과 주입만 함. 그림 주소 차단(`asset_guard.py`)은 꺼지지 않음
 - 기록은 `${BURROW_STATE_DIR:-$HOME/.local/state/burrow}/<session_id>.jsonl`
@@ -24,3 +25,4 @@ Claude Code 훅으로 burrow 스킬을 작업 흐름에 끼워 넣는다. `$HOME
 | `nudges.py` | 편집 대상에 맞는 스킬 문맥 주입 판정 |
 | `asset_guard.py` | 허용하지 않은 레포의 PR·이슈에 개인 리소스 레포 그림 주소가 실리는 것을 막음 |
 | `paths.py` | 경로가 소스·테스트·공개 계약인지 분류 |
+| `turn.py` | 멈추는 턴이 사용자에게 묻는 것으로 끝났는지 대화 기록에서 판정 |

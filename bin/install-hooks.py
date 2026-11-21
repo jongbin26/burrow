@@ -22,6 +22,7 @@ MARK = ".claude/hooks/burrow/hook.py"
 REGISTRATIONS = [
     ("PreToolUse", "Bash|Write|Edit|MultiEdit|NotebookEdit"),
     ("PostToolUse", "Skill|Write|Edit|MultiEdit|NotebookEdit"),
+    ("SubagentStart", None),
     ("SubagentStop", None),
     ("UserPromptSubmit", None),
     ("Stop", None),

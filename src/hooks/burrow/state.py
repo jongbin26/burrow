@@ -48,6 +48,25 @@ class Session:
     def has(self, kind: str, name: str) -> bool:
         return self.last(kind, name) >= 0
 
+    def unfinished(self, start: str, stop: str) -> int:
+        """시작했는데 아직 끝나지 않은 수. 이름은 `id|type`, 끝은 id가 같은 시작을 먼저, 없으면 type이 같은 시작을 닫음
+
+        - 시작 없는 끝(이어 보내기로 다시 끝난 에이전트 등)은 무시
+        """
+        opened: list[tuple[str, str]] = []
+        for e in self.events:
+            if e["kind"] not in (start, stop):
+                continue
+            agent_id, _, agent_type = e["name"].partition("|")
+            if e["kind"] == start:
+                opened.append((agent_id, agent_type))
+                continue
+            match = next((o for o in opened if agent_id and o[0] == agent_id), None) or next(
+                (o for o in opened if o[1] == agent_type), None)
+            if match:
+                opened.remove(match)
+        return len(opened)
+
     def done_since_last_edit(self, kind: str, name: str) -> bool:
         """편집이 없던 세션이면 한 번이라도 했는지만 본다."""
         return self.last(kind, name) > self.last("edit")
