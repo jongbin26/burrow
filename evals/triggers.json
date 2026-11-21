@@ -398,6 +398,23 @@
         "typescript",
         "dev-index"
       ]
+    },
+    {
+      "id": "pr-visuals-animated-flow",
+      "prompt": "이 PR 본문에 저장 재시도 흐름을 전후 비교 애니메이션 그림으로 넣어줘.",
+      "expect": [
+        "pr-visuals"
+      ],
+      "ok": [
+        "pr-writing"
+      ]
+    },
+    {
+      "id": "pr-visuals-negative-text-only",
+      "prompt": "PR 제목이 너무 길어. 첫 줄을 짧게 고쳐줘: 'fix: 저장 버튼을 눌렀을 때 네트워크가 끊기면 재시도 큐에 들어가지 않고 사라지는 문제 수정'",
+      "expect": [
+        "pr-writing"
+      ]
     }
   ]
 }

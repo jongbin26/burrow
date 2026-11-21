@@ -1,6 +1,6 @@
 ---
 name: pr-writing
-description: PR을 올리거나 커밋해 달라는 요청을 받았을 때(git commit, gh pr create, gh pr edit --body 직전), PR·커밋 메시지를 쓰거나 남의 것을 읽고 고칠 때 쓴다. 무엇을 남길지(원인·하지 않은 선택·확인 못 한 것)와 어떤 언어로 얼마나 쓸지(첫 줄 판정, 코드 어휘 배제, 맥락 먼저)를 판정한다. 몇 개의 PR로 나눌지는 pr-slicing, 변경을 어디까지 넣을지는 change-scope.
+description: PR을 올리거나 커밋해 달라는 요청을 받았을 때(git commit, gh pr create, gh pr edit --body 직전), PR·커밋 메시지를 쓰거나 남의 것을 읽고 고칠 때 쓴다. 무엇을 남길지(원인·하지 않은 선택·확인 못 한 것)와 어떤 언어로 얼마나 쓸지(첫 줄 판정, 코드 어휘 배제, 맥락 먼저)를 판정한다. 몇 개의 PR로 나눌지는 pr-slicing, 변경을 어디까지 넣을지는 change-scope, 본문에 그림을 넣는 법은 pr-visuals.
 ---
 
 # PR·커밋 서술

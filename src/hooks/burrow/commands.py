@@ -17,7 +17,7 @@ _GIT_OPTS_WITH_VALUE = {"-C", "-c", "--git-dir", "--work-tree", "--namespace"}
 _BODY_FLAGS = {"--body", "-b", "--body-file", "-F"}
 
 
-def _segments(command: str) -> list[list[str]]:
+def segments(command: str) -> list[list[str]]:
     text = _QUOTED.sub("''", _HEREDOC.sub("", command))
     out = []
     for part in _SEPARATOR.split(text):
@@ -51,7 +51,7 @@ def _has_flag(args: list[str], flags: set[str]) -> bool:
 
 def classify(command: str) -> set[str]:
     actions = set()
-    for words in _segments(command or ""):
+    for words in segments(command or ""):
         tool, args = words[0].rsplit("/", 1)[-1], words[1:]
         if tool == "git" and _git_subcommand(args) == "commit":
             actions.add(COMMIT)

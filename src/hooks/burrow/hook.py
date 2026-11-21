@@ -13,6 +13,7 @@ import sys
 sys.dont_write_bytecode = True  # 링크된 레포 디렉토리에 캐시를 남기지 않음
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+import asset_guard  # noqa: E402
 import commands  # noqa: E402
 import gates  # noqa: E402
 import nudges  # noqa: E402
@@ -43,8 +44,11 @@ def _edit_target(tool_input: dict) -> tuple[str, str]:
 
 def _pre_tool(session: Session, data: dict) -> dict | None:
     tool, tool_input = data.get("tool_name"), data.get("tool_input") or {}
-    if tool == "Bash" and _gates_on():
-        reason = gates.check_command(session, commands.classify(tool_input.get("command", "")))
+    if tool == "Bash":
+        command = tool_input.get("command", "")
+        reason = asset_guard.check(command, data.get("cwd", ""))
+        if not reason and _gates_on():
+            reason = gates.check_command(session, commands.classify(command))
         if reason:
             return {"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "deny",
                                            "permissionDecisionReason": reason}}
